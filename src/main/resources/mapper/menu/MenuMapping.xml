@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ke.system.menu.mapper.MenuMapper">
+
+    <resultMap id="BaseResultMap" type="com.ke.system.menu.entity.Menu">
+        <result column="id" jdbcType="INTEGER" property="id" />
+        <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="flag" jdbcType="VARCHAR" property="flag" />
+        <result column="level" jdbcType="INTEGER" property="level" />
+        <result column="address" jdbcType="VARCHAR" property="address" />
+        <result column="create_by" jdbcType="INTEGER" property="createBy" />
+        <result column="create_time" jdbcType="DATE" property="createTime" />
+        <result column="update_by" jdbcType="INTEGER" property="updateBy" />
+        <result column="update_time" jdbcType="DATE" property="updateTime" />
+    </resultMap>
+
+    <select id="getAllMenu" resultMap="BaseResultMap">
+        select
+            id,
+            parent_id,
+            `name`,
+            flag,
+            `level`,
+            address,
+            create_by,
+            create_time,
+            update_by,
+            update_time
+        from menu
+    </select>
+
+    <select id="getMenusByRoleId" resultMap="BaseResultMap">
+        select
+            m.id,
+            m.parent_id,
+            m.name,
+            m.flag,
+            m.level,
+            m.address,
+            m.create_by,
+            m.create_time,
+            m.update_by,
+            m.update_time
+        from (select menu_id from role_menu_relation where role_id = #{roleId}) rm
+        left join menu m on m.id = rm.menu_id
+    </select>
+</mapper>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ke.system.user.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.ke.system.user.entity.User">
+        <result column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="roleId" jdbcType="INTEGER" property="roleId" />
+        <result column="roleName" jdbcType="VARCHAR" property="roleName" />
+        <result column="passWord" jdbcType="VARCHAR" property="password" />
+        <result column="phone" jdbcType="BIGINT" property="phone" />
+        <result column="createBy" jdbcType="INTEGER" property="createBy" />
+        <result column="createDate" jdbcType="DATE" property="createDate" />
+    </resultMap>
+
+    <sql id="userParams">
+        u.`id` as `id`,
+        u.`name` as `name`,
+        r.`id` as `roleId`,
+        r.`name` as `roleName`,
+        u.`password` as `passWord`,
+        u.`create_by` as `createBy`,
+        u.`create_date` as `createDate`
+        from `user` u
+        left join role r on u.role_id = r.id
+    </sql>
+
+    <select id="Sel" resultMap="BaseResultMap">
+        select
+        `id` as `id`,
+        `name` as `name`,
+        `password` as `passWord`,
+        `create_by` as `createBy`,
+        `create_date` as `createDate`
+        from demo_user where id = #{id}
+    </select>
+
+    <select id="findPage" resultMap="BaseResultMap">
+        select
+            <include refid="userParams"></include>
+        where 1=1
+        <if test="userName != null and userName != ''">
+            and u.`name` like #{userName}
+        </if>
+        limit #{startSite}, #{endSite};
+    </select>
+
+    <select id="getAllCount" resultType="java.lang.Integer">
+        select count(*) from `user`
+        where 1=1
+        <if test="userName != null and userName != ''">
+            and `name` like #{userName}
+        </if>;
+    </select>
+
+    <select id="getById" resultMap="BaseResultMap">
+        select
+            <include refid="userParams"></include>
+        from `user` u
+        left join role r on u.role_id = r.id
+        from `user`
+        where 1=1
+        <if test="id != null and id != ''">
+            and u.`id` = #{id}
+        </if>
+    </select>
+
+    <select id="getByName" resultMap="BaseResultMap">
+        select
+            <include refid="userParams"></include>
+        where 1=1
+        <if test="name != null and name != ''">
+            and u.`name` = #{name}
+        </if>
+    </select>
+
+    <select id="getByPhone" resultMap="BaseResultMap">
+        select
+            <include refid="userParams"></include>
+        where 1=1
+        <if test="phone != null and phone != ''">
+            and u.`phone` = #{phone}
+        </if>
+    </select>
+
+    <update id="update">
+        update `user`
+        set `name` = #{name}, `password` = #{password}, `phone` = #{phone}
+        where id = #{id};
+    </update>
+
+    <insert id="save">
+        insert into `user` (`name`, `password`, `phone`, `create_by`, `create_date`) value
+        (#{name}, #{password}, #{phone}, #{createBy}, #{createDate});
+    </insert>
+
+    <delete id="delete">
+        delete from `user` where id = #{id}
+    </delete>
+</mapper>
